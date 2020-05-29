@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+    <title>translator</title>
+    
+    <!--Because I display the translation at the end, you need to resubmit the sentence for it to size with the page with every media query (I hope that makes sense)?????-->	
+    
+    <style>
+	
+	body {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr 1fr 1fr;	
+		font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+	}
+	
+	img {
+		max-width: 100%;
+		text-align: center;
+		margin-top: 10px;
+	}
+	
+	h1 {
+		font-size: 2em;	
+	}
+	
+	p {
+		font-size: 1.2em;	
+	}
+	
+	h4 {
+		font-size: 1.2em;	
+	}
+	
+	form {
+		font-size: 1em;	
+		font-weight: bold;
+	}
+	
+	@media screen and (max-width: 599px) {
+		
+		body {
+			font-size: 14px;
+			background-color: #F9CFFA;
+		}
+		
+		#container {
+			grid-column: 1/6;
+			display: grid;
+			grid-template-columns: 1fr 15fr 1fr;	
+		}
+		
+		h1 {
+			grid-column: 2/3;	
+			text-align: center;
+			background-color: #F1E0AD;
+			color: #03C;
+		}
+		
+		form, p, h4 {
+			padding: 10px;
+			background-color: #F1E0AD;
+			color: #03C;
+		}
+		
+		section {
+			grid-column: 2/3;
+		}
+		
+		p {
+			margin: 23px;	
+		}
+	
+		.none {
+			display: none;		
+		}
+	}
+	
+	@media screen and (min-width: 600px) {
+		
+		body {
+			font-size: 16px;
+			background-image: url(images/pig_tiling_bg.jpg);
+		}
+		
+		#container {
+			width: 100%;
+			grid-column: 2/5;
+			
+		}
+		
+		form, p, h4 {
+			background-color: #F1E0AD;
+			color: #03C;
+		}
+		
+		h1 {
+			text-align: center;	
+			background-color: #F1E0AD;
+			color: #03C;
+		}
+		
+		form {
+			padding: 20px;	
+		}
+		
+		h4 {
+			padding: 10px;	
+		}
+		
+		figure {
+			text-align: center;
+		}
+		
+		img {
+			border: #03C solid;
+			max-width: 100%;	
+		}
+	}
+	
+	@media screen and (min-width: 900px) {
+		
+		body {
+			font-size: 18px;
+			background-image: url(images/pig_tiling_bg.jpg);
+		}
+		
+		#container {
+			background-color: #F1E0AD;
+			grid-column: 2/5;
+		}
+		
+		form, p, h4 {
+			color: #03C;
+			margin: 20px;
+		}
+		
+		h1 {
+			text-align: center;	
+			color: #03C;
+			margin: 20px;
+		}
+		
+		form {
+			padding: 20px;	
+		}
+		
+		h4 {
+			padding: 10px;	
+		}
+		
+		figure {
+			text-align: center;
+		}
+		
+		img {
+			border: #03C solid;
+			max-width: 100%;	
+		}
+		
+	}
+	
+	</style>
+    
+    <script>
+
+	var sentence = 0;
+	var x = 0;
+	var y = 0;
+	var newWord = 0;
+	var newSentence = "";
+	
+	var splitSen = [];
+	
+	
+	function translator(newSen) {
+		for (x=0; x < newSen.length; x++) {
+			if (newSen[0] == "a" || newSen[0] == "e" || newSen[0] == "i" || newSen[0] == "o" || newSen[0] == "u"){
+				newSentence += newSen + "yay ";
+				x = newSen.length + 1;
+			}
+			else if (newSen[x] == "a" || newSen[x] == "e" || newSen[x] == "i" || newSen[x] == "o" || newSen[x] == "u") {
+				var startSen = newSen.slice(x, newSen.length);
+				var endSen = newSen.slice(0, x);
+				newSentence += startSen + endSen + "ay ";
+				x = newSen.length + 1;
+			}
+			else if (x == newSen.length-1) {
+				yCheck(newSen);	
+			}
+			
+		}
+	}
+	
+	function yCheck(newSen) {
+		if (newSen[newSen.length - 1] == "y") {
+			var yWord = newSen.slice(0, newSen.lastIndexOf("y"));
+			newSentence += "y" + yWord + "ay ";
+		}
+		else if (newSen[newSen.length - 1] != "a" || newSen[newSen.length] != "e" || newSen[newSen.length] != "i" || newSen[newSen.length] != "o" || newSen[newSen.length] != "u") {
+			newSentence += newSen + "yay ";
+		}
+	}
+	
+	function myFunction() {
+		var sentence = document.myForm.theSentence.value;
+		splitSen = sentence.split(" ");
+		
+		for (y=0; y<splitSen.length; y++) {
+			sentence = splitSen[y];
+				if (sentence.indexOf("-") != -1) {
+					var splitSpot = sentence.indexOf("-");
+					newWord = sentence.slice(0, splitSpot);
+					translator(newWord);
+					newWord = sentence.slice(splitSpot+1, sentence.length);
+					translator(newWord);
+				}
+				else {
+					newWord = sentence;
+					translator(newWord);
+				}
+		}
+		
+		var killp = document.querySelector("p");
+		killp.parentNode.removeChild(killp);
+		
+		var newElement = document.createElement("p");
+		newElement.textContent = "Translated: " + newSentence;
+		document.body.appendChild(newElement);
+		newElement.style.backgroundColor = "#F1E0AD";
+		newElement.style.color = "#03C";
+		newElement.style.fontWeight = "bold";
+		newElement.style.textAlign = "center";
+		
+		var mq = window.matchMedia( "(max-width: 599px)" );
+		
+		if (mq.matches) {
+			newElement.style.gridColumn = "1/6";
+		} else {
+			newElement.style.gridColumn = "2/5";
+		}
+
+		newSentence = "";
+		
+		return false;
+	}
+	
+
+	</script>
+    
+    
+</head>
+
+<body>
+
+	<div id="container">
+    
+    <h1>Welcome to the Pig Latin Translator!</h1>
+    
+    <p class="none"></p>
+    
+    <section>
+    
+    <h4>Type in any word or sentence and watch as it magically gets translated to pig latin!!!</h4>
+
+	<form name="myForm" method="post" onSubmit="return myFunction()">
+    	
+        <label for="theSentence">Please enter a sentence.</label>
+    	<input type="text" name="inputValue" id="theSentence" />
+        
+        <input type="submit"/>
+        
+    </form>
+    
+    <figure><img src="images/waddles.gif" alt="Waddles the Pig"/></figure>
+	
+    </section>
+    
+    </div>
+	
+</body>
+
+</html>
